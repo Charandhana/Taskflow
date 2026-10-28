@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Reminders</title>
+    <link rel="stylesheet" href="/static/core/style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+    <h1>Task Reminders</h1>
+
+    <h2>Upcoming Tasks</h2>
+
+    {% for task in upcoming_tasks %}
+        <div class="notification-card">
+            <h3>{{ task.title }}</h3>
+            <p>Project: {{ task.project.name }}</p>
+            <p>Due: {{ task.due_date }}</p>
+            <p>Priority: {{ task.priority }}</p>
+        </div>
+    {% empty %}
+        <p>No upcoming tasks.</p>
+    {% endfor %}
+
+    <hr>
+
+    <h2>Overdue Tasks</h2>
+
+    {% for task in overdue_tasks %}
+        <div class="notification-card">
+            <h3>{{ task.title }}</h3>
+            <p>Project: {{ task.project.name }}</p>
+            <p>Due: {{ task.due_date }}</p>
+            <p>Status: {{ task.status }}</p>
+        </div>
+    {% empty %}
+        <p>No overdue tasks.</p>
+    {% endfor %}
+
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

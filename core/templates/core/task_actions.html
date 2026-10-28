@@ -1,0 +1,46 @@
+<div class="task-actions">
+
+    <a href="{% url 'edit_task' task.id %}">
+        Edit
+    </a>
+
+    <form method="POST"
+          action="{% url 'delete_task' task.id %}"
+          onsubmit="return confirm('Delete this task?');">
+
+        {% csrf_token %}
+
+        <button type="submit" class="delete-btn">
+            Delete
+        </button>
+
+    </form>
+
+    <form method="POST"
+          action="{% url 'update_task_status' task.id %}"
+          class="status-form">
+
+        {% csrf_token %}
+
+        <select name="status">
+            <option value="To Do"
+                {% if task.status == 'To Do' %}selected{% endif %}>
+                To Do
+            </option>
+
+            <option value="In Progress"
+                {% if task.status == 'In Progress' %}selected{% endif %}>
+                In Progress
+            </option>
+
+            <option value="Completed"
+                {% if task.status == 'Completed' %}selected{% endif %}>
+                Completed
+            </option>
+        </select>
+
+        <button type="submit">Move</button>
+
+    </form>
+
+</div>

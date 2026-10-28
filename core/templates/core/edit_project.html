@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Project - TaskFlow</title>
+    <link rel="stylesheet" href="/static/core/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>TaskFlow</h1>
+    <h2>Edit Project</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <p>Project Name</p>
+
+        <input type="text" name="name"
+               value="{{ project.name }}" required>
+
+        <p>Description</p>
+
+        <textarea name="description" required>{{ project.description }}</textarea>
+
+        <p>Team Members</p>
+
+        <select name="members" multiple>
+
+            {% for user in users %}
+                <option value="{{ user.id }}"
+                    {% if user in project.members.all %}selected{% endif %}>
+                    {{ user.username }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+        <button type="submit">Update Project</button>
+
+    </form>
+
+    <p><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
+
+</div>
+
+</body>
+</html>

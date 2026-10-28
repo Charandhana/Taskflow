@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile - TaskFlow</title>
+    <link rel="stylesheet" href="/static/core/style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+    <h1>My Profile</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Username</label>
+        <input type="text" value="{{ request.user.username }}" disabled>
+
+        <label>Email Address</label>
+        <input
+            type="email"
+            name="email"
+            value="{{ request.user.email }}"
+            placeholder="Enter your email"
+        >
+
+        <button type="submit">Update Profile</button>
+    </form>
+    <a href="{% url 'change_password' %}">
+        Change Password
+    </a>
+
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

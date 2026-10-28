@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TaskFlow - Login</title>
+    <link rel="stylesheet" href="/static/core/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>TaskFlow</h1>
+    <h2>Welcome Back!</h2>
+    <p>Login to continue managing your projects.</p>
+
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p>Don't have an account?
+        <a href="{% url 'register' %}">Register</a>
+    </p>
+</div>
+
+</body>
+</html>

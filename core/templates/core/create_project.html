@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Project - TaskFlow</title>
+    <link rel="stylesheet" href="/static/core/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>TaskFlow</h1>
+    <h2>Create New Project</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <p>Project Name</p>
+        <input type="text" name="name" placeholder="Enter project name" required>
+
+        <p>Project Description</p>
+        <textarea name="description" placeholder="Enter project description" required></textarea>
+
+        <p>Select Team Members</p>
+
+        <select name="members" multiple>
+            {% for user in users %}
+                <option value="{{ user.id }}">
+                    {{ user.username }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <p style="font-size:12px;">
+            Hold Ctrl to select multiple members.
+        </p>
+
+        <label>Project Category</label>
+
+<select name="category">
+    <option value="Development">Development</option>
+    <option value="Design">Design</option>
+    <option value="Research">Research</option>
+    <option value="Education">Education</option>
+    <option value="Business">Business</option>
+    <option value="Others" selected>Others</option>
+</select>
+        <button type="submit">Create Project</button>
+
+    </form>
+
+    <p><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
+
+</div>
+
+</body>
+</html>

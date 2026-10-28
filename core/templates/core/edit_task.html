@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Task - TaskFlow</title>
+    <link rel="stylesheet" href="/static/core/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>TaskFlow</h1>
+
+    <h2>Edit Task</h2>
+
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <p>Task Title</p>
+
+        <input type="text"
+               name="title"
+               value="{{ task.title }}"
+               required>
+
+        <p>Description</p>
+
+        <textarea name="description" required>{{ task.description }}</textarea>
+
+        <p>Assign To</p>
+
+        <select name="assigned_to">
+
+            <option value="">Not Assigned</option>
+
+            {% for member in members %}
+
+                <option value="{{ member.id }}"
+                    {% if task.assigned_to_id == member.id %}selected{% endif %}>
+                    {{ member.username }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+        <p>Task Status</p>
+
+        <select name="status">
+
+            <option value="To Do"
+                {% if task.status == 'To Do' %}selected{% endif %}>
+                To Do
+            </option>
+
+            <option value="In Progress"
+                {% if task.status == 'In Progress' %}selected{% endif %}>
+                In Progress
+            </option>
+
+            <option value="Completed"
+                {% if task.status == 'Completed' %}selected{% endif %}>
+                Completed
+            </option>
+
+        </select>
+
+        <p>Due Date</p>
+
+        <input type="date"
+               name="due_date"
+               value="{{ task.due_date|date:'Y-m-d' }}">
+
+        <button type="submit">Update Task</button>
+
+    </form>
+
+    <p>
+        <a href="{% url 'project_tasks' task.project.id %}">
+            Back to Tasks
+        </a>
+    </p>
+
+</div>
+
+</body>
+</html>

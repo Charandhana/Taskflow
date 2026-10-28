@@ -1,0 +1,53 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TaskFlow - Register</title>
+    <link rel="stylesheet" href="/static/core/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>TaskFlow</h1>
+    <h2>Create Account</h2>
+    <p>Join TaskFlow and manage your projects.</p>
+
+    {% if form.errors %}
+        <div style="color: red;">
+            {{ form.errors }}
+        </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'register' %}">
+        {% csrf_token %}
+
+        <p>
+            <label>Username</label>
+            {{ form.username }}
+        </p>
+
+        <p>
+            <label>Password</label>
+            {{ form.password1 }}
+        </p>
+
+        <p>
+            <label>Confirm Password</label>
+            {{ form.password2 }}
+        </p>
+
+        <button type="submit">Create Account</button>
+
+    </form>
+
+    <p>
+        Already have an account?
+        <a href="{% url 'login' %}">Login</a>
+    </p>
+
+</div>
+
+</body>
+</html>
+```

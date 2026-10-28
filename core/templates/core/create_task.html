@@ -1,0 +1,68 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Task - TaskFlow</title>
+    <link rel="stylesheet" href="{% static 'core/style.css' %}">
+</head>
+<body>
+
+<div class="comment-container">
+
+    <h1>Create New Task</h1>
+
+    <form method="POST" enctype="multipart/form-data" action="{% url 'create_task' project.id %}">
+        {% csrf_token %}
+
+        <label>Task Title</label>
+        <input type="text" name="title" required>
+
+        <br><br>
+
+        <label>Description</label>
+        <textarea name="description" rows="5"></textarea>
+        <label>Attach File</label>
+        <input type="file" name="attachment">
+
+        <br><br>
+
+        <label>Assign To</label>
+        <select name="assigned_to">
+            <option value="">Not Assigned</option>
+
+            {% for member in project.members.all %}
+                <option value="{{ member.id }}">
+                    {{ member.username }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label>Due Date</label>
+        <input type="date" name="due_date">
+
+        <br><br>
+        
+<label for="priority">Task Priority</label>
+
+<select name="priority" id="priority">
+    <option value="Low">Low</option>
+    <option value="Medium" selected>Medium</option>
+    <option value="High">High</option>
+</select>
+
+        <button type="submit">Submit Task</button>
+
+        <a href="{% url 'project_tasks' project.id %}">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+</body>
+</html>

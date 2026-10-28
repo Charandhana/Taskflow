@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Team Members</title>
+    <link rel="stylesheet" href="/static/core/style.css">
+</head>
+<body>
+
+<div class="dashboard">
+    <h1>Manage Team Members</h1>
+
+    <h2>{{ project.name }}</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input
+            type="text"
+            name="username"
+            placeholder="Enter registered username"
+            required
+        >
+
+        <button type="submit">Add Member</button>
+    </form>
+
+    <h2>Current Members</h2>
+
+    {% for member in members %}
+        <p>{{ member.username }}</p>
+    {% empty %}
+        <p>No members found.</p>
+    {% endfor %}
+
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+</div>
+
+</body>
+</html>

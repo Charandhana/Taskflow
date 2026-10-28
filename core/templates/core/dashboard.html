@@ -1,0 +1,331 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow | Dashboard</title>
+    <link rel="stylesheet" href="{% static 'core/style.css' %}">
+</head>
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="brand-icon">T</span>
+            <h2>TaskFlow</h2>
+        </div>
+
+        <p class="nav-label">WORKSPACE</p>
+
+        <nav class="sidebar-nav">
+            <a href="{% url 'dashboard' %}" class="active">▦ Dashboard</a>
+            <a href="{% url 'create_project' %}">＋ Create Project</a>
+            <a href="{% url 'task_reminders' %}">◷ Task Reminders</a>
+            <a href="{% url 'profile' %}">◎ My Profile</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="user-mini">
+                <div class="avatar">{{ request.user.username|first|upper }}</div>
+                <div>
+                    <strong>{{ request.user.username }}</strong>
+                    <small>Workspace Member</small>
+                </div>
+            </div>
+
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="logout-btn" type="submit">↪ Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">WORKSPACE OVERVIEW</p>
+                <h1>Dashboard</h1>
+                <p class="welcome-text">
+                    Welcome back, {{ request.user.username }}!
+                    Here's what's happening with your projects.
+                </p>
+            </div>
+
+            <a href="{% url 'create_project' %}" class="primary-btn">
+                + New Project
+            </a>
+        </header>
+
+        <!-- MESSAGES -->
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+
+        <!-- STATISTICS -->
+        <section class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon purple">▦</div>
+                <p>Total Projects</p>
+                <h2>{{ total_projects|default:projects.count }}</h2>
+                <small>Your workspace projects</small>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue">✓</div>
+                <p>Total Tasks</p>
+                <h2>{{ total_tasks|default:0 }}</h2>
+                <small>Across all projects</small>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">✔</div>
+                <p>Completed Tasks</p>
+                <h2>{{ completed_tasks|default:0 }}</h2>
+                <small>Successfully completed</small>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">◷</div>
+                <p>Pending Tasks</p>
+                <h2>{{ pending_tasks|default:0 }}</h2>
+                <small>Tasks remaining</small>
+            </div>
+        </section>
+
+        <!-- OVERALL PROGRESS -->
+        <section class="panel overall-panel">
+            <div class="section-title">
+                <div>
+                    <h2>Overall Progress</h2>
+                    <p>Your task completion summary</p>
+                </div>
+                <strong class="percentage">{{ progress|default:0 }}%</strong>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar"
+     data-progress="{{ progress|default:0 }}">
+</div>
+            </div>
+            <small>Overall task completion</small>
+        </section>
+
+        <!-- PROJECTS -->
+        <section class="projects-section">
+
+            <div class="section-title">
+                <div>
+                    <h2>My Projects</h2>
+                    <p>Manage and track your ongoing projects.</p>
+                </div>
+            </div>
+
+            <!-- SEARCH AND FILTER -->
+            <form method="GET" class="filter-form">
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search projects..."
+                    value="{{ search }}"
+                >
+
+                <select name="category">
+                    <option value="">All Categories</option>
+                    {% for value, label in categories %}
+                        <option value="{{ value }}"
+                            {% if category == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="filter-btn">Filter</button>
+                <a href="{% url 'dashboard' %}" class="clear-btn">Clear</a>
+            </form>
+
+            <div class="project-grid">
+
+                {% for project in projects %}
+
+                <article class="project-card">
+
+                    <div class="project-card-top">
+                        <span class="project-icon">▦</span>
+                        <span class="category-badge">
+                            {{ project.category }}
+                        </span>
+                    </div>
+
+                    <h3>{{ project.name }}</h3>
+                    <p class="project-description">
+                        {{ project.description }}
+                    </p>
+
+                    <small class="created-by">
+                        Created by {{ project.created_by.username }}
+                    </small>
+
+                    <!-- PROJECT PROGRESS -->
+                    {% for item in project_data %}
+                        {% if item.project.id == project.id %}
+                        <div class="project-progress">
+                            <div class="progress-info">
+                                <span>Project Progress</span>
+                                <strong>{{ item.percentage }}%</strong>
+                            </div>
+
+                            <div class="progress-container">
+                                <div class="progress-bar"
+     data-progress="{{ item.percentage }}">
+</div>
+                            </div>
+
+                            <small>
+                                {{ item.completed }} / {{ item.total }}
+                                tasks completed
+                            </small>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- TEAM MEMBERS -->
+                    <div class="team-section">
+                        <strong>Team Members</strong>
+                        <div class="team-list">
+                            {% for member in project.members.all %}
+                                <span class="member-chip">
+                                    {{ member.username }}
+                                </span>
+                            {% empty %}
+                                <small>No team members yet.</small>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- PROJECT ACTIONS -->
+                    <div class="project-actions">
+                        <a href="{% url 'project_tasks' project.id %}"
+                           class="primary-btn">View Tasks</a>
+
+                        <a href="{% url 'manage_members' project.id %}"
+                           class="secondary-btn">Members</a>
+                    </div>
+
+                    {% if project.created_by == request.user %}
+                    <div class="owner-actions">
+                        <a href="{% url 'edit_project' project.id %}">Edit</a>
+
+                        <form method="POST"
+                              action="{% url 'delete_project' project.id %}"
+                              onsubmit="return confirm('Delete this project?');">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                    {% endif %}
+
+                </article>
+
+                {% empty %}
+
+                <div class="empty-projects">
+                    <h3>No projects found</h3>
+                    <p>Create a project or change your search filters.</p>
+                    <a href="{% url 'create_project' %}" class="primary-btn">
+                        Create Your First Project
+                    </a>
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </section>
+
+        <!-- ACTIVITY AND NOTIFICATIONS -->
+        <div class="bottom-grid">
+
+            <section class="panel">
+                <div class="section-title">
+                    <div>
+                        <h2>Recent Activity</h2>
+                        <p>Latest team updates</p>
+                    </div>
+                </div>
+
+                {% for activity in activities %}
+                <div class="activity-card">
+                    <div class="activity-dot"></div>
+                    <div>
+                        <p>
+                            <strong>{{ activity.user.username }}</strong>
+                            {{ activity.message }}
+                        </p>
+                        <small>{{ activity.project.name }}</small>
+                        <small>
+                            {{ activity.created_at|date:"d M Y, h:i A" }}
+                        </small>
+                    </div>
+                </div>
+                {% empty %}
+                    <p class="empty-text">No recent activities.</p>
+                {% endfor %}
+            </section>
+
+            <section class="panel">
+                <div class="section-title">
+                    <div>
+                        <h2>Notifications</h2>
+                        <p>Your latest updates</p>
+                    </div>
+                </div>
+
+                {% for notification in notifications %}
+                <div class="notification-card">
+                    <p>{{ notification.message }}</p>
+
+                    <small>
+                        {{ notification.created_at|date:"d M Y, h:i A" }}
+                    </small>
+
+                    {% if not notification.is_read %}
+                        <span class="unread-label">NEW</span>
+
+                        <form method="POST"
+                              action="{% url 'mark_notification_read' notification.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="read-btn">
+                                Mark as Read
+                            </button>
+                        </form>
+                    {% else %}
+                        <small class="read-label">Read</small>
+                    {% endif %}
+                </div>
+                {% empty %}
+                    <p class="empty-text">No notifications available.</p>
+                {% endfor %}
+            </section>
+
+        </div>
+
+        <footer class="footer">
+            TaskFlow © 2026 · Manage your work smarter.
+        </footer>
+
+    </main>
+</div>
+<script>
+document.querySelectorAll('.progress-bar').forEach(bar => {
+    let value = Number(bar.dataset.progress) || 0;
+    value = Math.max(0, Math.min(100, value));
+    bar.style.width = value + '%';
+});
+</script>
+</body>
+</html>
